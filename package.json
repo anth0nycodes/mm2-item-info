@@ -1,0 +1,19 @@
+{
+  "name": "mm2-fetch",
+  "version": "1.0.0",
+  "description": "A simple data fetcher for mm2.cheap guns and knives.",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "npx tsx src/index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "anth0nycodes",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^26.1.2",
+    "axios": "^1.19.0",
+    "tsx": "^4.23.1",
+    "typescript": "^7.0.2"
+  }
+}
