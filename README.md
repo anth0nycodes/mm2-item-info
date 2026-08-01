@@ -1,4 +1,4 @@
-# mm2-weapons-scraper
+# 🔎 mm2-weapons-scraper
 
 A simple data scraper for [mm2.cheap](https://mm2.cheap) that retrieves Murder Mystery 2 (MM2) weapon listings for price and value analysis.
 
