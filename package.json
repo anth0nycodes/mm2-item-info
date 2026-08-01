@@ -1,7 +1,7 @@
 {
-  "name": "mm2-fetch",
+  "name": "mm2-weapons-scraper",
   "version": "1.0.0",
-  "description": "A simple data fetcher for mm2.cheap guns and knives.",
+  "description": "A simple data scraper for mm2.cheap that retrieves Murder Mystery 2 weapon listings for price and value analysis.",
   "type": "module",
   "main": "src/index.ts",
   "scripts": {
