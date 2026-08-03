@@ -1,30 +1,21 @@
-interface Variant {
-  price: string;
-  compare_at_price: string;
-  available: boolean;
+// Data
+export interface ItemsData {
+  items: Item[];
 }
 
-interface Product {
-  title: string;
-  handle: string;
-  variants: Variant[];
+export interface Item {
+  name: string;
+  value: number;
+  value_source_a: number;
+  value_source_b: number;
+  category: string;
+  type: string;
+  stability: string;
+  demand: number;
+  rarity: number;
 }
 
-export interface WeaponData {
-  products: Product[];
+// Config
+export interface Config {
+  apiKey: string;
 }
-
-export interface WeaponDataResponse {
-  data: WeaponData;
-}
-
-export interface CleanedWeapon {
-  title: string;
-  handle: string;
-  price: string;
-  compare_at_price: string;
-}
-
-export type CleanedWeaponData = CleanedWeapon[];
-
-export type Weapon = "guns" | "knives";

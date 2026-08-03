@@ -1,22 +1,8 @@
-import { writeFile } from "node:fs/promises";
-import { CleanedWeaponData, Weapon } from "./types";
+import type { Config } from "./types";
 
-export async function sleep(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
+export async function getConfig() {}
+export async function setConfig(config: Config) {}
 
-export function truncate(str: string, maxLength: number) {
-  const remainingChars = str.length - maxLength;
-  return str.length > maxLength
-    ? str.slice(0, maxLength) + `...${remainingChars} more chars`
-    : str;
-}
-
-export async function writeWeaponDataToFile(
-  weaponData: CleanedWeaponData,
-  weaponType: Weapon,
-) {
-  const jsonWeaponData = JSON.stringify(weaponData, null, 2);
-  await writeFile(`mm2-${weaponType}.json`, jsonWeaponData, "utf-8");
-  return jsonWeaponData;
+export function getErrorMessage(error: unknown) {
+  return error instanceof Error ? error.message : String(error);
 }
