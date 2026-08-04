@@ -17,7 +17,7 @@ import { dirname, join } from "path";
 import { readFileSync } from "fs";
 import { fileURLToPath } from "url";
 import chalk from "chalk";
-import { ITEM_TYPES, RARITIES, RBLX_VALUE_BASE_URL } from "./constants.js";
+import { ITEM_CATEGORIES, RARITIES, RBLX_VALUE_BASE_URL } from "./constants.js";
 import { ItemsResponse } from "./types.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -34,11 +34,11 @@ async function main() {
     )
     .version(packageJson.version);
 
-  program.option("-i, --info <item-name>", "show information of an item");
-  program.option("--lit, --list-item-types", "list all item types");
-  program.option("--lr, --list-rarities", "list all rarities");
-  program.option("--aki, --api-key-info", "show how to obtain an api key");
-  program.option("--sak, --set-api-key <api-key>", "set your api key");
+  program.option("-i, --info <item-name>", "get information about an item");
+  program.option("--lc, --list-categories", "list all item categories");
+  program.option("--lr, --list-rarities", "list all item rarities");
+  program.option("--aki, --api-key-info", "show how to obtain an API key");
+  program.option("--sak, --set-api-key <api-key>", "set your API key");
   program.option("--sc, --show-config", "displays your current config");
   program.option("--rc, --reset-config", "resets your current config");
 
@@ -113,11 +113,11 @@ async function main() {
     }
   }
 
-  if (opts.listItemTypes) {
-    const itemTypes = ITEM_TYPES.map((type) => `- ${chalk.yellow(type)}`).join(
-      "\n",
-    );
-    console.log(`Available item types:\n${itemTypes}`);
+  if (opts.listCategories) {
+    const itemCategories = ITEM_CATEGORIES.map(
+      (category) => `- ${chalk.yellow(category)}`,
+    ).join("\n");
+    console.log(`Available item categories:\n${itemCategories}`);
     process.exit();
   }
 

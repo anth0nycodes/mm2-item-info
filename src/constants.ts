@@ -2,7 +2,7 @@ import chalk from "chalk";
 import { makeTextRainbow } from "./helpers.js";
 
 export const RBLX_VALUE_BASE_URL = "https://rblxvalue.com/api/v1";
-export const ITEM_TYPES = ["Knife", "Gun", "Pet", "Miscellaneous"];
+export const ITEM_CATEGORIES = ["Knife", "Gun", "Pet", "Miscellaneous"];
 export const RARITIES = [
   { name: "Ancient", colorFn: chalk.hex("#5f02ef") }, // Purple
   { name: "Vintage", colorFn: chalk.hex("#E5C500") }, // Gold
