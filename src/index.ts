@@ -2,18 +2,23 @@
 
 import { intro } from "@clack/prompts";
 import { program } from "commander";
+import axios from "axios";
 import {
+  capitalizeWords,
   CONFIG_FILE,
+  displayImage,
   fileExists,
   getConfig,
   getErrorMessage,
+  renderItemInfo,
   setConfig,
 } from "./helpers.js";
 import { dirname, join } from "path";
 import { readFileSync } from "fs";
 import { fileURLToPath } from "url";
 import chalk from "chalk";
-import { ITEM_TYPES, RARITIES } from "./constants.js";
+import { ITEM_TYPES, RARITIES, RBLX_VALUE_BASE_URL } from "./constants.js";
+import { Item, Items, ItemsData } from "./types.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -59,6 +64,56 @@ async function main() {
       `  5. Copy the generated key and set it with ${chalk.yellow("mm2-item-info --sak <api-key>")} / ${chalk.yellow("mm2-item-info --set-api-key <api-key>")}.`,
     );
     return;
+  }
+
+  if (opts.info) {
+    const config = await getConfig();
+    if (!config.apiKey) {
+      console.error(
+        `You do not currently have an API key set. Please set your API key with ${chalk.yellow("mm2-item-info --sak <api-key>")} / ${chalk.yellow("mm2-item-info --set-api-key <api-key>")}.`,
+      );
+      process.exit();
+    }
+
+    const apiKey = config.apiKey;
+    const searchQuery: string = opts.info.replace(/\s+/g, " ").trim();
+
+    try {
+      const { data }: ItemsData = await axios.get(
+        `${RBLX_VALUE_BASE_URL}/items?search=${encodeURIComponent(searchQuery)}`,
+        {
+          headers: {
+            "X-Api-Key": apiKey,
+          },
+        },
+      );
+
+      const cleanedData: Item[] = data.items.map((item: Item) => ({
+        name: item.name,
+        value: item.value,
+        category: item.category,
+        type: item.type,
+        stability: item.stability,
+        demand: item.demand,
+        rarity: item.rarity,
+        image_url: item.image_url,
+      }));
+
+      for (const item of cleanedData) {
+        const itemImage = await displayImage(item.image_url);
+        console.log(itemImage);
+        console.log(
+          chalk.cyanBright(`${capitalizeWords(item.name)} Information:`),
+        );
+        console.log(`${renderItemInfo(item)}\n`);
+      }
+
+      process.exit();
+    } catch (error) {
+      const errorMessage = getErrorMessage(error);
+      console.error("Error fetching item info:", errorMessage);
+      process.exit(1);
+    }
   }
 
   if (opts.listItemTypes) {

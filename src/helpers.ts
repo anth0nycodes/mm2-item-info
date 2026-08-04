@@ -1,9 +1,11 @@
 import { join } from "node:path";
-import type { Config } from "./types.js";
+import type { Config, Item } from "./types.js";
 import { homedir } from "node:os";
 import { access, mkdir, readFile, writeFile } from "node:fs/promises";
 import constants from "node:constants";
 import chalk from "chalk";
+import terminalImage from "terminal-image";
+import sharp from "sharp";
 
 export async function fileExists(path: string) {
   try {
@@ -36,10 +38,48 @@ export function makeTextRainbow(text: string) {
     .join("");
 }
 
+export async function displayImage(imageUrl: string) {
+  try {
+    const response = await fetch(imageUrl);
+    const imageBuffer = Buffer.from(await response.arrayBuffer());
+    // the imageUrl returns us a .webp image, but terminal-image doesn't support webp, so we need to convert it to png first
+    const pngImageBuffer = await sharp(imageBuffer).png().toBuffer();
+    const image = await terminalImage.buffer(pngImageBuffer, {
+      width: "15%",
+      height: "15%",
+    });
+    return image;
+  } catch (error) {
+    const errorMessage = getErrorMessage(error);
+    console.error("Failed to render image:", errorMessage);
+    process.exit(1);
+  }
+}
+
+export function capitalizeWords(str: string) {
+  return str.replace(/\b\w/g, (char) => char.toUpperCase());
+}
+
+export function renderItemInfo(item: Item) {
+  const fields = [
+    ["Value", item.value],
+    ["Demand", item.demand],
+    ["Rarity", item.rarity],
+    [
+      "Stability",
+      item.stability.length > 0 ? capitalizeWords(item.stability) : "N/A",
+    ],
+    ["Category", capitalizeWords(item.category)],
+    ["Type", capitalizeWords(item.type)],
+  ];
+
+  return fields.map(([field, value]) => `${field}: ${value}`).join("\n");
+}
+
 const CONFIG_DIR = join(homedir(), ".mm2-item.info");
 export const CONFIG_FILE = join(CONFIG_DIR, "config.json");
 
-export async function getConfig() {
+export async function getConfig(): Promise<Config> {
   try {
     const content = await readFile(CONFIG_FILE, "utf8");
     return JSON.parse(content);

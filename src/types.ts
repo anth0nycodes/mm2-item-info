@@ -1,18 +1,21 @@
 // Data
-export interface ItemsData {
+export interface Items {
   items: Item[];
 }
 
 export interface Item {
   name: string;
   value: number;
-  value_source_a: number;
-  value_source_b: number;
   category: string;
   type: string;
   stability: string;
   demand: number;
   rarity: number;
+  image_url: string;
+}
+
+export interface ItemsData {
+  data: Items;
 }
 
 // Config
