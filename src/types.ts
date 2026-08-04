@@ -10,7 +10,6 @@ export interface Item {
   type: string;
   stability: string;
   demand: number;
-  rarity: number;
   image_url: string;
 }
 

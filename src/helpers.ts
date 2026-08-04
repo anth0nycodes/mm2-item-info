@@ -6,6 +6,7 @@ import constants from "node:constants";
 import chalk from "chalk";
 import terminalImage from "terminal-image";
 import sharp from "sharp";
+import { RARITIES } from "./constants.js";
 
 export async function fileExists(path: string) {
   try {
@@ -60,17 +61,36 @@ export function capitalizeWords(str: string) {
   return str.replace(/\b\w/g, (char) => char.toUpperCase());
 }
 
+function renderRarityText(item: Item) {
+  if (item.category === "pets") {
+    // manually returning "pet" for categoryName because the API returns "pets" but we want to display "pet"
+    return { categoryName: "pet", rarity: item.type };
+  }
+  if (item.category === "misc") {
+    return { categoryName: item.category, rarity: item.type };
+  }
+  return { categoryName: item.type, rarity: capitalizeWords(item.category) };
+}
+
+function resolveRarity(item: Item) {
+  const { rarity: itemRarity } = renderRarityText(item);
+  const match = RARITIES.find(
+    (r) => r.name.toLowerCase() === itemRarity.toLowerCase(),
+  );
+  return match ? match.colorFn(match.name) : capitalizeWords(itemRarity);
+}
+
 export function renderItemInfo(item: Item) {
+  const { categoryName: itemCategoryName } = renderRarityText(item);
   const fields = [
+    ["Rarity", resolveRarity(item)],
+    ["Category", capitalizeWords(itemCategoryName)],
     ["Value", item.value],
     ["Demand", item.demand],
-    ["Rarity", item.rarity],
     [
       "Stability",
       item.stability.length > 0 ? capitalizeWords(item.stability) : "N/A",
     ],
-    ["Category", capitalizeWords(item.category)],
-    ["Type", capitalizeWords(item.type)],
   ];
 
   return fields.map(([field, value]) => `${field}: ${value}`).join("\n");

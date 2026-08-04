@@ -18,7 +18,7 @@ import { readFileSync } from "fs";
 import { fileURLToPath } from "url";
 import chalk from "chalk";
 import { ITEM_TYPES, RARITIES, RBLX_VALUE_BASE_URL } from "./constants.js";
-import { Item, Items, ItemsData } from "./types.js";
+import { ItemsData } from "./types.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -88,18 +88,7 @@ async function main() {
         },
       );
 
-      const cleanedData: Item[] = data.items.map((item: Item) => ({
-        name: item.name,
-        value: item.value,
-        category: item.category,
-        type: item.type,
-        stability: item.stability,
-        demand: item.demand,
-        rarity: item.rarity,
-        image_url: item.image_url,
-      }));
-
-      for (const item of cleanedData) {
+      for (const item of data.items) {
         const itemImage = await displayImage(item.image_url);
         console.log(itemImage);
         console.log(
