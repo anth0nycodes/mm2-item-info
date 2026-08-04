@@ -29,6 +29,9 @@
     "type": "git",
     "url": "git+https://github.com/anth0nycodes/mm2-item-info.git"
   },
+  "bugs": {
+    "url": "https://github.com/anth0nycodes/mm2-item-info/issues"
+  },
   "homepage": "https://github.com/anth0nycodes/mm2-item-info#readme",
   "devDependencies": {
     "@types/node": "^26.1.2",
