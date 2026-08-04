@@ -145,7 +145,7 @@ async function main() {
     `Run ${chalk.yellow("mm2-item-info -h")} to view all available options.\n`,
   );
   console.log(
-    `All data is provided by RBLXValue (${chalk.yellow("https://docs.rblxvalue.com/getting-started")}).`,
+    `All data is provided by RBLXValue (${chalk.bold(chalk.underline(chalk.yellow("https://docs.rblxvalue.com/getting-started")))}).`,
   );
 }
 
