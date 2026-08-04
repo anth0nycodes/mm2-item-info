@@ -89,7 +89,8 @@ async function main() {
       );
 
       for (const item of data.items) {
-        const itemImage = await displayImage(item.image_url);
+        const itemImageFallback = chalk.gray("No Image Available");
+        const itemImage = await displayImage(item.image_url, itemImageFallback);
         console.log(itemImage);
         console.log(
           chalk.cyanBright(`${capitalizeWords(item.name)} Information:`),

@@ -39,7 +39,7 @@ export function makeTextRainbow(text: string) {
     .join("");
 }
 
-export async function displayImage(imageUrl: string) {
+export async function displayImage(imageUrl: string, imageFallback?: string) {
   try {
     const response = await fetch(imageUrl);
     const imageBuffer = Buffer.from(await response.arrayBuffer());
@@ -51,6 +51,7 @@ export async function displayImage(imageUrl: string) {
     });
     return image;
   } catch (error) {
+    if (imageFallback) return imageFallback;
     const errorMessage = getErrorMessage(error);
     console.error("Failed to render image:", errorMessage);
     process.exit(1);
