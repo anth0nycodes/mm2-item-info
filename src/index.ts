@@ -18,7 +18,7 @@ import { readFileSync } from "fs";
 import { fileURLToPath } from "url";
 import chalk from "chalk";
 import { ITEM_CATEGORIES, RARITIES, RBLX_VALUE_BASE_URL } from "./constants.js";
-import { ItemsResponse } from "./types.js";
+import { ItemsData } from "./types.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -79,7 +79,7 @@ async function main() {
     const searchQuery: string = opts.info.replace(/\s+/g, " ").trim();
 
     try {
-      const { data }: ItemsResponse = await axios.get(
+      const { data }: { data: ItemsData } = await axios.get(
         `${RBLX_VALUE_BASE_URL}/items?search=${encodeURIComponent(searchQuery)}`,
         {
           headers: {

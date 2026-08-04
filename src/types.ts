@@ -13,10 +13,6 @@ export interface Item {
   image_url: string;
 }
 
-export interface ItemsResponse {
-  data: ItemsData;
-}
-
 // Config
 export interface Config {
   apiKey?: string;
