@@ -3,6 +3,7 @@ import type { Config } from "./types.js";
 import { homedir } from "node:os";
 import { access, mkdir, readFile, writeFile } from "node:fs/promises";
 import constants from "node:constants";
+import chalk from "chalk";
 
 export async function fileExists(path: string) {
   try {
@@ -11,6 +12,28 @@ export async function fileExists(path: string) {
   } catch {
     return false;
   }
+}
+
+export function makeTextRainbow(text: string) {
+  return text
+    .split("")
+    .map((char, idx) => {
+      const colors = [
+        chalk.redBright,
+        chalk.yellowBright,
+        chalk.greenBright,
+        chalk.cyanBright,
+        chalk.blueBright,
+        chalk.magentaBright,
+      ];
+
+      // Skip empty spaces so they don't consume a color index
+      if (char === " ") return char;
+
+      const colorFn = colors[idx % colors.length];
+      return colorFn(char);
+    })
+    .join("");
 }
 
 const CONFIG_DIR = join(homedir(), ".mm2-item.info");

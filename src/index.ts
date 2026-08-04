@@ -12,7 +12,8 @@ import {
 import { dirname, join } from "path";
 import { readFileSync } from "fs";
 import { fileURLToPath } from "url";
-import color from "picocolors";
+import chalk from "chalk";
+import { ITEM_TYPES, RARITIES } from "./constants.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -43,28 +44,44 @@ async function main() {
   if (opts.apiKeyInfo) {
     console.log(`To obtain an API key:`);
     console.log(
-      `  1. Visit ${color.yellow("https://rblxvalue.com/developer")} and log in with your Roblox account.`,
+      `  1. Visit ${chalk.bold(chalk.underline(chalk.yellow("https://rblxvalue.com/developer")))} and log in with your Roblox account.`,
     );
     console.log(
       `  2. Allow RBLXValue access (it only reads your Roblox User ID, username, display name, avatar, and profile link).`,
     );
     console.log(
-      `  3. Back on ${color.yellow("https://rblxvalue.com/developer")} (in case you were redirected), scroll to the ${color.yellow("Create New API Key")} section.`,
+      `  3. Back on ${chalk.bold(chalk.underline(chalk.yellow("https://rblxvalue.com/developer")))} (in case you were redirected), scroll to the ${chalk.yellow("Create New API Key")} section.`,
     );
     console.log(
-      `  4. Fill in the required fields, then click ${color.yellow("Create API Key")}.`,
+      `  4. Fill in the required fields, then click ${chalk.yellow("Create API Key")}.`,
     );
     console.log(
-      `  5. Copy the generated key and set it with ${color.yellow("mm2-item-info --sak <api-key>")} / ${color.yellow("mm2-item-info --set-api-key <api-key>")}.`,
+      `  5. Copy the generated key and set it with ${chalk.yellow("mm2-item-info --sak <api-key>")} / ${chalk.yellow("mm2-item-info --set-api-key <api-key>")}.`,
     );
     return;
+  }
+
+  if (opts.listItemTypes) {
+    const itemTypes = ITEM_TYPES.map((type) => `- ${chalk.yellow(type)}`).join(
+      "\n",
+    );
+    console.log(`Available item types:\n${itemTypes}`);
+    process.exit();
+  }
+
+  if (opts.listRarities) {
+    const rarities = RARITIES.map(
+      (rarity) => `- ${chalk.bold(rarity.colorFn(rarity.name))}`,
+    ).join("\n");
+    console.log(`List of rarities:\n${rarities}`);
+    process.exit();
   }
 
   if (opts.setApiKey) {
     const apiKey = opts.setApiKey;
     try {
       await setConfig({ apiKey: apiKey });
-      console.log(`${color.green("API key set successfully!")}`);
+      console.log(`${chalk.green("API key set successfully!")}`);
       process.exit();
     } catch (error) {
       const errorMessage = getErrorMessage(error);
@@ -76,7 +93,7 @@ async function main() {
   if (opts.showConfig) {
     if (!(await fileExists(CONFIG_FILE))) {
       console.log(
-        `${color.yellow("No config file found.")} No config to display. You can create a config by setting your API key with ${color.cyan("--sak <api-key>")} / ${color.cyan("--set-api-key <api-key>")}.`,
+        `${chalk.yellow("No config file found.")} No config to display. You can create a config by setting your API key with ${chalk.cyan("--sak <api-key>")} / ${chalk.cyan("--set-api-key <api-key>")}.`,
       );
       process.exit(0);
     }
@@ -85,10 +102,10 @@ async function main() {
       const config = await getConfig();
       const configString = JSON.stringify(config, null, 2);
       const isConfigEmpty = Object.keys(config).length === 0;
-      console.log(`${color.yellow("Your current config:\n")}${configString}`);
+      console.log(`${chalk.yellow("Your current config:\n")}${configString}`);
       if (isConfigEmpty) {
         console.log(
-          `\n${color.yellow("Note:")} Your config file is empty. You can set your API key with ${color.cyan("--sak <api-key>")} / ${color.cyan("--set-api-key <api-key>")}.`,
+          `\n${chalk.yellow("Note:")} Your config file is empty. You can set your API key with ${chalk.cyan("--sak <api-key>")} / ${chalk.cyan("--set-api-key <api-key>")}.`,
         );
       }
       process.exit();
@@ -102,13 +119,13 @@ async function main() {
   if (opts.resetConfig) {
     if (!(await fileExists(CONFIG_FILE))) {
       console.log(
-        `${color.yellow("No config file found.")} Nothing to reset. You can create a config by setting your API key with ${color.cyan("--sak <api-key>")} / ${color.cyan("--set-api-key <api-key>")}.`,
+        `${chalk.yellow("No config file found.")} Nothing to reset. You can create a config by setting your API key with ${chalk.cyan("--sak <api-key>")} / ${chalk.cyan("--set-api-key <api-key>")}.`,
       );
       process.exit();
     }
     try {
       await setConfig({});
-      console.log(`${color.green("Config reset successfully!")}`);
+      console.log(`${chalk.green("Config reset successfully!")}`);
       process.exit();
     } catch (error) {
       const errorMessage = getErrorMessage(error);
@@ -117,18 +134,18 @@ async function main() {
     }
   }
 
-  intro(color.greenBright("Murder Mystery 2 Item Info\n"));
+  intro(chalk.greenBright("Murder Mystery 2 Item Info\n"));
   console.log(
-    `${color.yellow("mm2-item-info")} is a command-line tool for looking up details about Murder Mystery 2 weapons, pets, and miscellaneous items.\n`,
+    `${chalk.yellow("mm2-item-info")} is a command-line tool for looking up details about Murder Mystery 2 weapons, pets, and miscellaneous items.\n`,
   );
   console.log(
-    `Get started by running ${color.yellow("mm2-item-info -i <item-name>")}, where ${color.yellow("<item-name>")} is the item you want to look up.\n`,
+    `Get started by running ${chalk.yellow("mm2-item-info -i <item-name>")}, where ${chalk.yellow("<item-name>")} is the item you want to look up.\n`,
   );
   console.log(
-    `Run ${color.yellow("mm2-item-info -h")} to view all available options.\n`,
+    `Run ${chalk.yellow("mm2-item-info -h")} to view all available options.\n`,
   );
   console.log(
-    `All data is provided by RBLXValue (${color.yellow("https://docs.rblxvalue.com/getting-started")}).`,
+    `All data is provided by RBLXValue (${chalk.yellow("https://docs.rblxvalue.com/getting-started")}).`,
   );
 }
 
