@@ -17,5 +17,5 @@ export interface Item {
 
 // Config
 export interface Config {
-  apiKey: string;
+  apiKey?: string;
 }
