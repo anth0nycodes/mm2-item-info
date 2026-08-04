@@ -83,18 +83,17 @@ function resolveRarity(item: Item) {
 
 export function renderItemInfo(item: Item) {
   const { categoryName: itemCategoryName } = renderRarityText(item);
-  const fields = [
-    ["Rarity", resolveRarity(item)],
-    ["Category", capitalizeWords(itemCategoryName)],
-    ["Value", item.value],
-    ["Demand", item.demand],
-    [
-      "Stability",
+  const fields: Record<string, string | number> = {
+    Rarity: resolveRarity(item),
+    Category: capitalizeWords(itemCategoryName),
+    Value: item.value,
+    Demand: item.demand,
+    Stability:
       item.stability.length > 0 ? capitalizeWords(item.stability) : "N/A",
-    ],
-  ];
-
-  return fields.map(([field, value]) => `${field}: ${value}`).join("\n");
+  };
+  return Object.entries(fields)
+    .map(([key, value]) => `${key}: ${value}`)
+    .join("\n");
 }
 
 const CONFIG_DIR = join(homedir(), ".mm2-item.info");
