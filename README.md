@@ -2,6 +2,13 @@
 
 A CLI tool for Murder Mystery 2 (MM2) that returns information about a weapon, pet, or misc item.
 
+![demo](./assets/demo.gif)
+
+<p align="center">
+  <img alt="GitHub Stars" src="https://img.shields.io/github/stars/anth0nycodes/mm2-item-info?style=plastic">
+  <img alt="NPM Downloads" src="https://img.shields.io/npm/d18m/%40anth0nycodes%2Fmm2-item-info?style=plastic">
+</p>
+
 ## Installation
 
 ```bash
@@ -18,7 +25,8 @@ mm2-item-info
 
 Shows basic information about the tool and how to use it. Run `mm2-item-info -h` / `mm2-item-info --help` for additional information.
 
-> **Note:** The free tier is limited to **30 requests/min**
+> [!NOTE]
+> The free tier is limited to **30 requests/min**
 
 ### Options
 
@@ -31,6 +39,9 @@ mm2-item-info -i <item-name>
 # or
 mm2-item-info --info <item-name>
 ```
+
+> [!NOTE]
+> Multi-word item names must be wrapped in quotes (e.g. `mm2-item-info -i "Elderwood Scythe"`).
 
 #### List Item Categories
 
