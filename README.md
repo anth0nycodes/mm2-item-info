@@ -48,7 +48,7 @@ mm2-item-info --info <item-name>
 List all supported item categories:
 
 ```bash
-mm2-item-info --lic
+mm2-item-info --lc
 # or
 mm2-item-info --list-item-categories
 ```
