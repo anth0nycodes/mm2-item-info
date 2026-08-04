@@ -18,7 +18,7 @@ import { readFileSync } from "fs";
 import { fileURLToPath } from "url";
 import chalk from "chalk";
 import { ITEM_TYPES, RARITIES, RBLX_VALUE_BASE_URL } from "./constants.js";
-import { ItemsData } from "./types.js";
+import { ItemsResponse } from "./types.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -79,7 +79,7 @@ async function main() {
     const searchQuery: string = opts.info.replace(/\s+/g, " ").trim();
 
     try {
-      const { data }: ItemsData = await axios.get(
+      const { data }: ItemsResponse = await axios.get(
         `${RBLX_VALUE_BASE_URL}/items?search=${encodeURIComponent(searchQuery)}`,
         {
           headers: {
@@ -87,6 +87,13 @@ async function main() {
           },
         },
       );
+
+      if (data.items.length === 0) {
+        console.log(
+          `No items found for "${chalk.yellow(searchQuery)}". Please check the item name and try again.`,
+        );
+        process.exit();
+      }
 
       for (const item of data.items) {
         const itemImageFallback = chalk.gray("No Image Available");

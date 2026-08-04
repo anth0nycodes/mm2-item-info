@@ -1,5 +1,5 @@
 // Data
-export interface Items {
+export interface ItemsData {
   items: Item[];
 }
 
@@ -13,8 +13,8 @@ export interface Item {
   image_url: string;
 }
 
-export interface ItemsData {
-  data: Items;
+export interface ItemsResponse {
+  data: ItemsData;
 }
 
 // Config
