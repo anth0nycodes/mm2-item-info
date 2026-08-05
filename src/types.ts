@@ -7,7 +7,7 @@ export interface Item {
   name: string;
   value: number;
   category: string;
-  type: string;
+  type: string | null;
   stability: string;
   demand: number;
   image_url: string;

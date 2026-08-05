@@ -4,7 +4,7 @@ import { intro } from "@clack/prompts";
 import { program } from "commander";
 import axios from "axios";
 import {
-  capitalizeWords,
+  formatDisplayText,
   CONFIG_FILE,
   displayImage,
   fileExists,
@@ -100,7 +100,7 @@ async function main() {
         const itemImage = await displayImage(item.image_url, itemImageFallback);
         console.log(itemImage);
         console.log(
-          chalk.cyanBright(`${capitalizeWords(item.name)} Information:`),
+          chalk.cyanBright(`${formatDisplayText(item.name)} Information:`),
         );
         console.log(`${renderItemInfo(item)}\n`);
       }
