@@ -58,38 +58,44 @@ export async function displayImage(imageUrl: string, imageFallback?: string) {
   }
 }
 
-export function capitalizeWords(str: string) {
+export function formatDisplayText(str: string | null | undefined) {
+  if (!str) return "N/A";
   return str.replace(/\b\w/g, (char) => char.toUpperCase());
 }
 
-function renderRarityText(item: Item) {
+function getItemCategoryAndRarity(item: Item) {
   if (item.category === "pets") {
-    // manually returning "pet" for categoryName because the API returns "pets" but we want to display "pet"
-    return { categoryName: "pet", rarity: item.type };
+    // manually returning "Pet" for categoryName because the API returns "pets" but we want to display "pet"
+    return { categoryName: "Pet", rarity: formatDisplayText(item.type) };
   }
   if (item.category === "misc") {
-    return { categoryName: item.category, rarity: item.type };
+    return {
+      categoryName: formatDisplayText(item.category),
+      rarity: formatDisplayText(item.type),
+    };
   }
-  return { categoryName: item.type, rarity: capitalizeWords(item.category) };
+  return {
+    categoryName: formatDisplayText(item.type),
+    rarity: formatDisplayText(item.category),
+  };
 }
 
-function resolveRarity(item: Item) {
-  const { rarity: itemRarity } = renderRarityText(item);
+function renderRarity(itemRarity: string) {
   const match = RARITIES.find(
     (r) => r.name.toLowerCase() === itemRarity.toLowerCase(),
   );
-  return match ? match.colorFn(match.name) : capitalizeWords(itemRarity);
+  return match ? match.colorFn(match.name) : itemRarity;
 }
 
 export function renderItemInfo(item: Item) {
-  const { categoryName: itemCategoryName } = renderRarityText(item);
+  const { rarity: itemRarity, categoryName: itemCategoryName } =
+    getItemCategoryAndRarity(item);
   const fields: Record<string, string | number> = {
-    Rarity: resolveRarity(item),
-    Category: capitalizeWords(itemCategoryName),
+    Rarity: renderRarity(itemRarity),
+    Category: itemCategoryName,
     Value: item.value,
     Demand: item.demand,
-    Stability:
-      item.stability.length > 0 ? capitalizeWords(item.stability) : "N/A",
+    Stability: formatDisplayText(item.stability),
   };
   return Object.entries(fields)
     .map(([key, value]) => `${key}: ${value}`)
