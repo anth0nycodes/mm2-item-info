@@ -50,7 +50,7 @@ List all supported item categories:
 ```bash
 mm2-item-info --lc
 # or
-mm2-item-info --list-item-categories
+mm2-item-info --list-categories
 ```
 
 #### List Rarities
