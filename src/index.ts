@@ -12,6 +12,7 @@ import {
   getErrorMessage,
   renderItemInfo,
   setConfig,
+  getBaseUrl,
 } from "./helpers.js";
 import { dirname, join } from "path";
 import { readFileSync } from "fs";
@@ -35,6 +36,10 @@ async function main() {
     .version(packageJson.version);
 
   program.option("-i, --info <item-name>", "get information about an item");
+  program.option(
+    "-r, --rarity <rarity-name>",
+    "get items for a specific rarity",
+  );
   program.option("--lc, --list-categories", "list all item categories");
   program.option("--lr, --list-rarities", "list all item rarities");
   program.option("--aki, --api-key-info", "show how to obtain an API key");
@@ -66,7 +71,15 @@ async function main() {
     return;
   }
 
-  if (opts.info) {
+  if (opts.info && opts.rarity) {
+    console.error(
+      `Use ${chalk.yellow("-i")} or ${chalk.yellow("-r")}, not both.`,
+    );
+    process.exit(1);
+  }
+
+  if (opts.info || opts.rarity) {
+    const flag = opts.info || opts.rarity;
     const config = await getConfig();
     if (!config.apiKey) {
       console.error(
@@ -76,11 +89,12 @@ async function main() {
     }
 
     const apiKey = config.apiKey;
-    const searchQuery: string = opts.info.replace(/\s+/g, " ").trim();
+    const searchQuery: string = flag.replace(/\s+/g, " ").trim();
+    const BASE_URL = getBaseUrl(opts);
 
     try {
       const { data }: { data: ItemsData } = await axios.get(
-        `${RBLX_VALUE_BASE_URL}/items?search=${encodeURIComponent(searchQuery)}`,
+        `${BASE_URL}${encodeURIComponent(searchQuery)}`,
         {
           headers: {
             "X-Api-Key": apiKey,
@@ -90,7 +104,7 @@ async function main() {
 
       if (data.items.length === 0) {
         console.log(
-          `No items found for "${chalk.yellow(searchQuery)}". Please check the item name and try again.`,
+          `No ${opts.info ? "items" : "rarities"} found for "${chalk.yellow(searchQuery)}". Please check the ${opts.info ? "item" : "rarity"} name and try again.`,
         );
         process.exit();
       }
