@@ -6,7 +6,8 @@ import constants from "node:constants";
 import chalk from "chalk";
 import terminalImage from "terminal-image";
 import sharp from "sharp";
-import { RARITIES } from "./constants.js";
+import { RARITIES, RBLX_VALUE_BASE_URL } from "./constants.js";
+import type { OptionValues } from "commander";
 
 export async function fileExists(path: string) {
   try {
@@ -15,6 +16,12 @@ export async function fileExists(path: string) {
   } catch {
     return false;
   }
+}
+
+export function getBaseUrl(opts: OptionValues) {
+  if (opts.info) return `${RBLX_VALUE_BASE_URL}/items?search=`;
+  if (opts.rarity) return `${RBLX_VALUE_BASE_URL}/items?category=`;
+  return RBLX_VALUE_BASE_URL;
 }
 
 export function makeTextRainbow(text: string) {
