@@ -13,4 +13,5 @@ export const RARITIES = [
   { name: "Rare", colorFn: chalk.cyanBright },
   { name: "Uncommon", colorFn: chalk.greenBright },
   { name: "Common", colorFn: chalk.gray },
+  { name: "Misc", colorFn: chalk.gray },
 ];
