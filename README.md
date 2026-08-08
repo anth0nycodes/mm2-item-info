@@ -43,6 +43,16 @@ mm2-item-info --info <item-name>
 > [!NOTE]
 > Multi-word item names must be wrapped in quotes (e.g. `mm2-item-info -i "Elderwood Scythe"`).
 
+#### Get Items by Rarity
+
+Get all items of a specific rarity:
+
+```bash
+mm2-item-info -r <rarity-name>
+# or
+mm2-item-info --rarity <rarity-name>
+```
+
 #### List Item Categories
 
 List all supported item categories:
