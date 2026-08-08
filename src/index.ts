@@ -38,7 +38,7 @@ async function main() {
   program.option("-i, --info <item-name>", "get information about an item");
   program.option(
     "-r, --rarity <rarity-name>",
-    "get items for a specific rarity",
+    "get items of a specific rarity",
   );
   program.option("--lc, --list-categories", "list all item categories");
   program.option("--lr, --list-rarities", "list all item rarities");
