@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { intro } from "@clack/prompts";
+import { cancel, confirm, intro, isCancel } from "@clack/prompts";
 import { program } from "commander";
 import axios from "axios";
 import {
@@ -18,7 +18,7 @@ import { dirname, join } from "path";
 import { readFileSync } from "fs";
 import { fileURLToPath } from "url";
 import chalk from "chalk";
-import { ITEM_CATEGORIES, RARITIES, RBLX_VALUE_BASE_URL } from "./constants.js";
+import { ITEM_CATEGORIES, RARITIES } from "./constants.js";
 import { ItemsData } from "./types.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -91,34 +91,67 @@ async function main() {
     const apiKey = config.apiKey;
     const searchQuery: string = flag.replace(/\s+/g, " ").trim();
     const BASE_URL = getBaseUrl(opts);
+    let currentItems = 0;
+    let total = 0;
+    let offset = 0;
 
     try {
-      const { data }: { data: ItemsData } = await axios.get(
-        `${BASE_URL}${encodeURIComponent(searchQuery)}`,
-        {
-          headers: {
-            "X-Api-Key": apiKey,
+      do {
+        const { data }: { data: ItemsData } = await axios.get(
+          `${BASE_URL}${encodeURIComponent(searchQuery)}&limit=100&offset=${offset}`,
+          {
+            headers: {
+              "X-Api-Key": apiKey,
+            },
           },
-        },
-      );
-
-      if (data.items.length === 0) {
-        console.log(
-          `No ${opts.info ? "items" : "rarities"} found for "${chalk.yellow(searchQuery)}". Please check the ${opts.info ? "item" : "rarity"} name and try again.`,
         );
-        process.exit();
-      }
 
-      for (const item of data.items) {
-        const itemImageFallback = chalk.gray("No Image Available");
-        const itemImage = await displayImage(item.image_url, itemImageFallback);
-        console.log(itemImage);
-        console.log(
-          chalk.cyanBright(`${formatDisplayText(item.name)} Information:`),
-        );
-        console.log(`${renderItemInfo(item)}\n`);
-      }
+        if (data.items.length === 0) {
+          // first page of items
+          if (offset === 0) {
+            console.log(
+              `No ${opts.info ? "items" : "rarities"} found for "${chalk.yellow(searchQuery)}". Please check the ${opts.info ? "item" : "rarity"} name and try again.`,
+            );
+          } else {
+            console.log(
+              `No more items to show for "${chalk.yellow(searchQuery)}". Some may have been removed since you started.`,
+            );
+          }
+          break;
+        }
 
+        currentItems += data.items.length;
+        offset += data.items.length;
+        total = data.total;
+
+        for (const item of data.items) {
+          const itemImageFallback = chalk.gray("No Image Available");
+          const itemImage = await displayImage(
+            item.image_url,
+            itemImageFallback,
+          );
+          console.log(itemImage);
+          console.log(
+            chalk.cyanBright(`${formatDisplayText(item.name)} Information:`),
+          );
+          console.log(`${renderItemInfo(item)}\n`);
+        }
+
+        if (currentItems < total) {
+          const shouldContinue = await confirm({
+            message: `Do you want to fetch more items? Currently showing ${currentItems} of ${total} items.`,
+          });
+
+          if (isCancel(shouldContinue)) {
+            cancel("Operation cancelled.");
+            process.exit();
+          }
+
+          if (!shouldContinue) {
+            break;
+          }
+        }
+      } while (currentItems < total);
       process.exit();
     } catch (error) {
       const errorMessage = getErrorMessage(error);

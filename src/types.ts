@@ -1,5 +1,6 @@
 // Data
 export interface ItemsData {
+  total: number;
   items: Item[];
 }
 
