@@ -49,6 +49,10 @@ export function makeTextRainbow(text: string) {
 export async function displayImage(imageUrl: string, imageFallback?: string) {
   try {
     const response = await fetch(imageUrl);
+    if (!response.ok) {
+      console.error("Failed to fetch image:", response.statusText);
+      return imageFallback;
+    }
     const imageBuffer = Buffer.from(await response.arrayBuffer());
     // the imageUrl returns us a .webp image, but terminal-image doesn't support webp, so we need to convert it to png first
     const pngImageBuffer = await sharp(imageBuffer).png().toBuffer();
