@@ -15,6 +15,9 @@
   "bin": {
     "mm2-item-info": "./dist/index.js"
   },
+  "files": [
+    "dist"
+  ],
   "keywords": [
     "roblox",
     "murder mystery 2",
