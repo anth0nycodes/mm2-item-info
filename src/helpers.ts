@@ -1,5 +1,5 @@
 import { join } from "node:path";
-import type { Config, Item } from "./types.js";
+import type { ApiError, Config, Item } from "./types.js";
 import { homedir } from "node:os";
 import { access, mkdir, readFile, writeFile } from "node:fs/promises";
 import constants from "node:constants";
@@ -8,6 +8,7 @@ import terminalImage from "terminal-image";
 import sharp from "sharp";
 import { RARITIES, RBLX_VALUE_BASE_URL } from "./constants.js";
 import type { OptionValues } from "commander";
+import { isAxiosError } from "axios";
 
 export async function fileExists(path: string) {
   try {
@@ -18,10 +19,11 @@ export async function fileExists(path: string) {
   }
 }
 
-export function getBaseUrl(opts: OptionValues) {
-  if (opts.info) return `${RBLX_VALUE_BASE_URL}/items?search=`;
-  if (opts.rarity) return `${RBLX_VALUE_BASE_URL}/items?category=`;
-  return RBLX_VALUE_BASE_URL;
+export const ITEMS_URL = `${RBLX_VALUE_BASE_URL}/items`;
+
+// -i searches by name/acronym, -r filters by category (rarity)
+export function getItemsFilter(opts: OptionValues, query: string) {
+  return opts.info ? { search: query } : { category: query.toLowerCase() };
 }
 
 export function makeTextRainbow(text: string) {
@@ -46,7 +48,11 @@ export function makeTextRainbow(text: string) {
     .join("");
 }
 
-export async function displayImage(imageUrl: string, imageFallback?: string) {
+export async function displayImage(
+  imageUrl: string | null,
+  imageFallback?: string,
+) {
+  if (!imageUrl) return imageFallback;
   try {
     const response = await fetch(imageUrl);
     if (!response.ok) {
@@ -105,7 +111,7 @@ export function renderItemInfo(item: Item) {
     Rarity: renderRarity(itemRarity),
     Category: itemCategoryName,
     Value: item.value,
-    Demand: item.demand,
+    Demand: item.demand ?? "N/A",
     Stability: formatDisplayText(item.stability),
   };
   return Object.entries(fields)
@@ -138,5 +144,9 @@ export async function setConfig(config: Config) {
 }
 
 export function getErrorMessage(error: unknown) {
+  // v2 errors are always `{ error: true, message }` with a matching HTTP status
+  if (isAxiosError<ApiError>(error) && error.response?.data?.message) {
+    return `${error.response.data.message} (HTTP ${error.response.status})`;
+  }
   return error instanceof Error ? error.message : String(error);
 }

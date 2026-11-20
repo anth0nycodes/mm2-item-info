@@ -12,14 +12,15 @@ import {
   getErrorMessage,
   renderItemInfo,
   setConfig,
-  getBaseUrl,
+  getItemsFilter,
+  ITEMS_URL,
 } from "./helpers.js";
 import { dirname, join } from "path";
 import { readFileSync } from "fs";
 import { fileURLToPath } from "url";
 import chalk from "chalk";
 import { ITEM_CATEGORIES, RARITIES } from "./constants.js";
-import { ItemsData } from "./types.js";
+import type { ItemsData } from "./types.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -90,23 +91,20 @@ async function main() {
 
     const apiKey = config.apiKey;
     const searchQuery: string = flag.replace(/\s+/g, " ").trim();
-    const BASE_URL = getBaseUrl(opts);
     let currentItems = 0;
     let total = 0;
     let offset = 0;
 
     try {
       do {
-        const { data }: { data: ItemsData } = await axios.get(
-          `${BASE_URL}${encodeURIComponent(searchQuery)}&limit=100&offset=${offset}`,
-          {
-            headers: {
-              "X-Api-Key": apiKey,
-            },
+        const { data } = await axios.get<ItemsData>(ITEMS_URL, {
+          params: { ...getItemsFilter(opts, searchQuery), limit: 100, offset },
+          headers: {
+            "X-Api-Key": apiKey,
           },
-        );
+        });
 
-        if (data.items.length === 0) {
+        if (data.count === 0) {
           // first page of items
           if (offset === 0) {
             console.log(
@@ -120,8 +118,8 @@ async function main() {
           break;
         }
 
-        currentItems += data.items.length;
-        offset += data.items.length;
+        currentItems += data.count;
+        offset += data.count;
         total = data.total;
 
         for (const item of data.items) {
